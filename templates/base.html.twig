@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Todo APP</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    </head>
+    <body>
+        <div class="container">
+            <div class="total mt-4 mb-4">
+                <h4 class="bg-primary text-white px-3 py-2 rounded">{{ 'İş yükü &x gün &y saat içinde tamamlanır.'|replace({'&x': todo.totalEstimate.day, '&y': todo.totalEstimate.hour}) }}</h4>
+            </div>
+
+            {% for weekNumber,weekDay in todo.weekDay %}
+                <div class="card mb-4">
+                    <div class="card-header">{{ weekDay }}</div>
+                    <div class="card-body p-0">
+                        <table class="table mb-0 table-sdm table-borderless">
+                            <thead>
+                                <tr>
+                                    {% for developer in todo.developers %}
+                                        <th>{{ developer.name }} <sup>Zorluk: {{ developer.difficulty }}</sup></th>
+                                    {% endfor %}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for workHour in 1..9 %}
+                                    <tr>
+                                        {% for developer in todo.developers %}
+                                            <td>
+                                                {% for task in todo.task(developer, weekNumber) %}
+                                                    {% if task %}
+                                                        <div>{{ task.id }} <span class="badge badge-primary">{{ task.difficulty }}</span></div>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </td>
+                                        {% endfor %}
+                                    </tr>
+                                {% endfor %}
+                                <tr>
+                                    {% for developer in todo.developers %}
+                                        <td>Toplam: <span>{{ todo.totalDayLoad(developer, weekNumber) / developer.difficulty }} saat</span></td>
+                                    {% endfor %}
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </body>
+</html>
